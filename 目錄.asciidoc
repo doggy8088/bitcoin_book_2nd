@@ -1,8 +1,8 @@
-= 精通比特币
+= 精通比特幣
 
 include::前言.asciidoc[]
 
-include::术语.asciidoc[]
+include::術語.asciidoc[]
 
 include::第一章.asciidoc[]
 
