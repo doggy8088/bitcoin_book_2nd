@@ -22,7 +22,7 @@ generator = generator_secp256k1
 def random_secret():
     convert_to_int = lambda array: int("".join(array).encode("hex"), 16)
 
-    # 从OS的密码学安全的随机数发生器中收集256位随机数据
+    # 從OS的密碼學安全的隨機亂數產生器中收集256位随機數據
     byte_array = os.urandom(32)
 
     return convert_to_int(byte_array)
@@ -43,16 +43,16 @@ def get_point_pubkey_uncompressed(point):
     return key.decode('hex')
 
 
-# 生成私钥
+# 生成私鑰
 secret = random_secret()
 print("Secret: ", secret)
 
-# 生成公钥
+# 生成公鑰
 point = secret * generator
 print("EC point:", point)
 
 print("BTC public key:", get_point_pubkey(point).encode("hex"))
 
-# 给定点（x，y），我们可以使用以下方法创建对象
+# 给定點（x，y），我们可以使用以下方法創建物件
 point1 = ecdsa.ellipticcurve.Point(curve, point.x(), point.y(), ec_order)
 assert(point1 == point)
