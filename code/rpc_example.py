@@ -1,10 +1,10 @@
 from bitcoin.rpc import RawProxy
 
-# 与本地Bitcoin Core节点创建连接
+# 與本地Bitcoin Core節點創建連接
 p = RawProxy()
 
-# 运行 getblockchaininfo 命令, 将返回数据保存到info中
+# 運行 getblockchaininfo 命令, 將返回數據保存到info中
 info = p.getblockchaininfo()
 
-# 打印info中的blocks内容
+# 印出info中的blocks内容
 print(info['blocks'])
