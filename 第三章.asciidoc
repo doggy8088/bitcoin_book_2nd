@@ -1,19 +1,19 @@
 [[ch03_bitcoin_client]]
-== Bitcoin Core：參考實現
+== Bitcoin Core：參考實作 (Bitcoin Core: The Reference Implementation)
 
 <<第二章#,上一章：比特幣如何運作>>
 
 ((("open source licenses")))((("Nakamoto, Satoshi")))比特幣是開源的專案，原始碼使用MIT授權方式，可以免費下載和使用。開源不僅意味著免費使用，也意味著比特幣是由開源志願者社群開發的。起初，這個社群只包括中本聰（Satoshi Nakamoto）。到2016年，比特幣的原始碼擁有超過400個貢獻者，大約有十幾位開發人員幾乎全職工作，另外幾十人兼職工作。任何人都可以貢獻程式碼，包括你！
 
 
-((("bitcoin whitepaper")))((("Satoshi client")))((("reference implementation", see="Bitcoin Core")))((("Bitcoin Core", "reference implementation")))當中本聰創造比特幣時，該軟體實際上已經在白皮書出現之前完成。在寫這篇文章之前，中本聰想確保它可以工作。第一版實現已經進行了大量修改和改進，已經發展成為所謂的_Bitcoin Core（Bitcoin Core）_，以區別於其他相容的實現。Bitcoin Core是比特幣系統的參考實現，這意味著它是關於如何實施每一部分技術的權威參考。Bitcoin Core實現了比特幣的各個方面，包括錢套件，交易和區塊驗證引擎，以及點對點比特幣網路中的完整網路節點。
+((("bitcoin whitepaper")))((("Satoshi client")))((("reference implementation", see="Bitcoin Core")))((("Bitcoin Core", "reference implementation")))當中本聰創造比特幣時，該軟體實際上已經在白皮書出現之前完成。在寫這篇文章之前，中本聰想確保它可以工作。第一版實現已經進行了大量修改和改進，已經發展成為所謂的 _比特幣核心_ (Bitcoin Core)，以區別於其他相容的實現。Bitcoin Core 是比特幣系統的參考實作，這意味著它是關於如何實施每一部分技術的權威參考。Bitcoin Core 實現了比特幣的各個方面，包括錢包、交易和區塊驗證引擎，以及點對點比特幣網路中的完整網路節點。
 
 [WARNING]
 ====
-((("wallets", "best practices for")))((("bitcoin improvement proposals", "Mnemonic Code Words (BIP-39)")))((("bitcoin improvement proposals", "Hierarchical Deterministic Wallets (BIP-32/BIP-44)")))儘管Bitcoin Core包含錢套件的參考實現，但並不建議將其用作使用者或應用程式生產環境中的錢套件。建議應用程式開發人員使用現代標準（如BIP-39和BIP-32）開發錢包（請參閱<<mnemonic_code_words>>和<<hd_wallets>>）。 BIP代表_Bitcoin改進建議_。
+((("wallets", "best practices for")))((("bitcoin improvement proposals", "Mnemonic Code Words (BIP-39)")))((("bitcoin improvement proposals", "Hierarchical Deterministic Wallets (BIP-32/BIP-44)")))儘管 Bitcoin Core 包含錢包的參考實作，但並不建議將其用作使用者或應用程式生產環境中的錢包。建議應用程式開發人員使用現代標準 (如 BIP-39 和 BIP-32 ) 開發錢包 (請參閱 <<mnemonic_code_words>> 和 <<hd_wallets>>)。BIP 是 Bitcoin Improvement Proposal 的縮寫，即 _Bitcoin 改進提案_ 的意思。
 ====
 
-<<bitcoin_core_architecture>> 展示了Bitcoin Core的架構。((("Bitcoin Core", "architecture")))
+<<bitcoin_core_architecture>> 展示了 Bitcoin Core 的架構。((("Bitcoin Core", "architecture")))
 
 [[bitcoin_core_architecture]]
 .Bitcoin Core architecture (Source: Eric Lombrozo)
@@ -25,13 +25,13 @@ image::images/mbc2_0301.png["Bitcoin Core Architecture"]
 ((("development environment", "setup", see="Bitcoin Core")))如果你是一名開發者，你需要建立一個開發環境，其中包含用於編寫比特幣應用程式的所有工具，函式庫和支援軟體。在這個高度技術性的章節中，我們將一步一步地介紹該過程。如果覺得過於複雜（並且你實際上沒有設定開發環境），請隨意跳到下一章，技術性較弱的章節。
 
 [[compiling_core]]
-=== 透過原始碼編譯Bitcoin Core
+=== 透過原始碼編譯 Bitcoin Core
 
-((("Bitcoin Core", "compiling from source code", id="BCsource03")))((("Bitcoin Core", "compiling from source code", "downloading")))((("code examples, obtaining and using")))可以從Github下載Bitcoin Core的原始碼壓縮包或複製專案。例如，((("Bitcoin Core downloads")))在 https://bitcoincore.org/bin/[Bitcoin Core download page]上, 選擇最新版本的原始碼壓縮套件，+bitcoin-0.15.0.2.tar.gz+。 ((("GitHub bitcoin page")))或者, 使用git clone命令在本地建立一個備份。 https://github.com/bitcoin/bitcoin[GitHub bitcoin page].
+((("Bitcoin Core", "compiling from source code", id="BCsource03")))((("Bitcoin Core", "compiling from source code", "downloading")))((("code examples, obtaining and using")))可以從 GitHub 下載 Bitcoin Core 的原始碼。例如，((("Bitcoin Core downloads")))在 https://bitcoincore.org/bin/[Bitcoin Core 下載頁面] 上，選擇最新版本的原始碼壓縮檔，+bitcoin-core-0.21.2/bitcoin-0.21.2.tar.gz+。((("GitHub bitcoin page")))或者，使用 +git clone+ 命令在本地建立一個備份。 link:https://github.com/bitcoin/bitcoin[Bitcoin Core - GitHub]
 
 [TIP]
 ====
-((("$ symbol")))((("shell commands")))((("terminal applications")))在本章的許多示例中，我們將使用作業系統的命令列介面（也稱為“shell”），透過“終端”應用程式訪問它，shell將顯示一個提示符；你輸入一個命令；shell會為你的下一個命令返回一些文字和一個新的提示符。提示可能在你的系統上看起來不同，但在以下示例中，它由 +$+ 號表示。在示例中，當你在 +$+ 符號後面看到文字時，請勿鍵入 +$+ 符號，而是在其後面緊接著輸入命令，然後按Enter執行該命令。在示例中，每條命令下面的行是作業系統對該命令的響應。當你看到下一個 +$+ 字首時，你應該知道這是一個新的命令列，你可以重複這個過程。
+((("$ symbol")))((("shell commands")))((("terminal applications")))在本章的許多範例中，我們將使用作業系統的命令列介面（也稱為“shell”），透過“終端”應用程式訪問它，shell 將顯示一個提示字元；你輸入一個命令；shell會為你的下一個命令返回一些文字和一個新的提示字元。提示可能在你的系統上看起來不同，但在以下範例中，它由 +$+ 號表示。在範例中，當你在 +$+ 符號後面看到文字時，請勿鍵入 +$+ 符號，而是在其後面緊接著輸入命令，然後按Enter執行該命令。在範例中，每條命令下面的行是作業系統對該命令的響應。當你看到下一個 +$+ 字首時，你應該知道這是一個新的命令列，你可以重複這個過程。
 ====
 
 ((("cloning source code")))((("source code, cloning", seealso="Bitcoin Core")))在這個例子中，我們使用 +git+ 命令建立原始碼的本地副本。
@@ -53,13 +53,13 @@ $
 ((("distributed version control systems")))Git是使用最廣泛的分散式版本控制系統，它是軟體開發人員工具箱的重要組成部分。如果你尚未安裝，請在作業系統上安裝 +git+ 命令或git的圖形使用者介面。
 ====
 
-當git複製操作完成後，你將在_bitcoin_目錄中擁有完整的原始碼函式庫本地副本。在提示符處輸入 ++**cd bitcoin**++ 切換到此目錄：
+當git複製操作完成後，你將在 _bitcoin_ 目錄中擁有完整的原始碼函式庫本地副本。在提示字元處輸入 ++cd bitcoin++ 切換到此目錄：
 ----
 $ cd bitcoin
 ----
 
-==== 選擇Bitcoin Core的發行版
-((("Bitcoin Core", "compiling from source code", "version selection")))預設情況下，本地副本將同步最新的程式碼，這可能是比特幣的不穩定版或beta版。編譯程式碼之前，透過檢查_tag_來選擇特定版本。這將使本地副本與由關鍵字標記標識的程式碼儲存函式庫的特定快照同步。開發人員使用標籤透過版本號標記程式碼的特定版本。首先，為了找到可用的標籤，我們使用 +git tag+ 命令：
+==== 選擇 Bitcoin Core 的發行版
+((("Bitcoin Core", "compiling from source code", "version selection")))預設情況下，本地副本將同步最新的程式碼，這可能是比特幣的不穩定版或 Beta 版。編譯程式碼之前，透過檢查 _tag_ 來選擇特定版本。這將使本地副本與由關鍵字標記標識的程式碼儲存函式庫的特定快照同步。開發人員使用標籤透過版本號標記程式碼的特定版本。首先，為了找到可用的標籤，我們使用 +git tag+ 命令：
 
 ----
 $ git tag
@@ -89,11 +89,11 @@ HEAD detached at v0.15.0
 nothing to commit, working directory clean
 ----
 
-==== Bitcoin Core的建構配置
+==== Bitcoin Core 的建構配置
 
-((("Bitcoin Core", "compiling from source code", "build configuration")))((("documentation")))((("build documentation", seealso="Bitcoin Core")))原始碼包括文件，可以在許多檔案中找到。輸入 ++** more README.md**++，檢視_bitcoin_目錄中的_README.md_主文件，可使用空格鍵進行翻頁。在本章中，我們將建構命令列比特幣客戶端（command-line bitcoin client），在Linux上也稱為 +bitcoind+。輸入 ++**more doc/build-unix.md**++ 來檢視在你的平臺上編譯 +bitcoind+ 的說明。macOS和Windows的說明可以在_doc_目錄中找到，分別為_build-osx.md_或_build-windows.md_。
+((("Bitcoin Core", "compiling from source code", "build configuration")))((("documentation")))((("build documentation", seealso="Bitcoin Core")))原始碼包括文件，可以在許多檔案中找到。輸入 ++more README.md++，檢視 _bitcoin_ 目錄中的_README.md_主文件，可使用空格鍵進行翻頁。在本章中，我們將建構命令列比特幣客戶端（command-line bitcoin client），在Linux上也稱為 +bitcoind+。輸入 ++more doc/build-unix.md++ 來檢視在你的平臺上編譯 +bitcoind+ 的說明。macOS和Windows的說明可以在_doc_目錄中找到，分別為_build-osx.md_或_build-windows.md_。
 
-仔細檢視建構文件第一部分中的依賴函式庫，如boost-devel, libevent-devel, openssl-devel, gcc-c++，libdb4-cxx-devel，autoconf, automake，libtool等。在你開始編譯比特幣之前，這些函式庫必須存在於你的系統中，否則建構過程將失敗。如果因為漏掉了某些依賴函式庫而導致失敗，可以安裝它，然後從之前停止的地方恢復建構過程。你可以透過使用_autogen.sh_指令碼產生一組建構指令碼來啟動建構過程。
+仔細檢視建構文件第一部分中的依賴函式庫，如 boost-devel, libevent-devel, openssl-devel, gcc-c++, libdb4-cxx-devel, autoconf, automake, libtool等。在你開始編譯比特幣之前，這些函式庫必須存在於你的系統中，否則建構過程將失敗。如果因為漏掉了某些依賴函式庫而導致失敗，可以安裝它，然後從之前停止的地方恢復建構過程。你可以透過使用 _autogen.sh_ 指令碼產生一組建構指令碼來啟動建構過程。
 
 ----
 $ ./autogen.sh
@@ -112,7 +112,7 @@ Makefile.am: installing 'build-aux/depcomp'
 ...
 ----
 
-_autogen.sh_指令碼建立一組自動配置指令碼，它們將詢問你的系統以發現正確的設定，並確保你擁有編譯程式碼所需的全部函式庫。其中最重要的是 +configure+ 指令碼，它提供了許多不同的選項來訂製建構過程。鍵入 ++**./configure --help**++ 檢視各種選項。
+_autogen.sh_ 指令碼建立一組自動配置指令碼，它們將詢問你的系統以發現正確的設定，並確保你擁有編譯程式碼所需的全部函式庫。其中最重要的是 +configure+ 指令碼，它提供了許多不同的選項來訂製建構過程。鍵入 ++./configure --help++ 檢視各種選項。
 
 ----
 $ ./configure --help
@@ -142,10 +142,10 @@ Optional Features:
 <dd><p>覆蓋產生的可執行檔案的預設安裝位置 (<em>/usr/local/</em>)。使用<code>$HOME</code>以將所有內容放在你的主目錄，也可以使用其他路徑。</p></dd>
 
 <dt><code>--disable-wallet</code></dt>
-<dd><p>禁用錢套件的參考實現。</p></dd>
+<dd><p>禁用錢包的參考實作。</p></dd>
 
 <dt><code>--with-incompatible-bdb</code></dt>
-<dd><p>如果你正在建構錢套件，可以允許使用不相容Berkeley DB函式庫的版本。</p></dd>
+<dd><p>如果你正在建構錢包，可以允許使用不相容Berkeley DB函式庫的版本。</p></dd>
 
 <dt><code>--with-gui=no</code></dt>
 <dd><p>不建構需要Qt函式庫的圖形使用者介面。這隻會建構伺服器和命令列。</p></dd>
@@ -171,9 +171,9 @@ $
 
 如果一切順利，+configure+ 命令將建立允許我們編譯 +bitcoind+ 的訂製建構指令碼並結束。如果有任何缺失的函式庫或錯誤，+configure+ 命令將終止並顯示錯誤。如果發生錯誤，很可能是因為缺少或不相容的函式庫。再次檢視建構文件，並確保安裝缺少的先決條件。然後再次執行 +configure+ 並檢視是否修復了錯誤。
 
-==== 建構Bitcoin Core可執行檔案
+==== 建構 Bitcoin Core 可執行檔案
 
-((("Bitcoin Core", "compiling from source code", "core executables")))((("core executables", seealso="Bitcoin Core")))接下來，你將編譯原始碼，這個過程可能需要一個小時才能完成，具體取決於CPU的速度和可用記憶體。在編譯過程中，你應該每隔幾秒或幾分鐘看一次輸出。如果發生錯誤，或者編譯過程中斷，可以透過再次輸入 +make+ 恢復。鍵入 ++**make**++ 開始編譯可執行應用程式：
+((("Bitcoin Core", "compiling from source code", "core executables")))((("core executables", seealso="Bitcoin Core")))接下來，你將編譯原始碼，這個過程可能需要一個小時才能完成，具體取決於CPU的速度和可用記憶體。在編譯過程中，你應該每隔幾秒或幾分鐘看一次輸出。如果發生錯誤，或者編譯過程中斷，可以透過再次輸入 +make+ 恢復。鍵入 ++make++ 開始編譯可執行應用程式：
 
 ----
 $ make
@@ -194,7 +194,7 @@ Making all in src
 $
 ----
 
-在具有多個CPU的系統上，你可以設定並行編譯作業的核數。例如，+make -j 2+ 將使用兩個CPU核。如果一切順利，Bitcoin Core已經編譯完成，你應該使用 +make check+ 執行單元測試套件，以確保連結函式庫不會中斷。最後一步是使用 +make install+ 命令在你的系統上安裝可執行檔案。系統可能會提示你輸入使用者密碼，因為此步驟需要管理許可權：
+在具有多個 CPU 的系統上，你可以設定並行編譯作業的核數。例如，+make -j 2+ 將使用兩個 CPU 核心。如果一切順利，Bitcoin Core 已經編譯完成，你應該使用 +make check+ 執行單元測試套件，以確保連結函式庫不會中斷。最後一步是使用 +make install+ 命令在你的系統上安裝可執行檔案。系統可能會提示你輸入使用者密碼，因為此步驟需要管理許可權：
 
 ----
 $ make check && sudo make install
@@ -222,15 +222,15 @@ $ which bitcoin-cli
 
 ((("Bitcoin Core", "running core nodes", id="BCnode03")))((("bitcoin nodes", "running core nodes", id="BNcore03")))比特幣的點對點網路由網路“節點”組成，主要由志願者和一些建構比特幣應用的企業執行。那些執行比特幣節點的人對比特幣區塊鏈擁有直接和權威的視野，並擁有所有交易的本地副本，由他們自己的系統進行獨立驗證。透過執行節點，你可以不依靠任何第三方來驗證交易。此外，你還可以透過增強比特幣網路的能力，為比特幣網路做出貢獻。
 
-然而，執行一個節點，需要有足夠資源來處理所有比特幣交易的永久的可連線的系統。取決於你是否選擇索引所有交易並儲存區塊鏈的完整副本，你可能還需要大量的磁碟空間和記憶體。 在2018年初，一個全部索引的節點需要至少2GB記憶體和160GB硬碟空間（參見 https://blockchain.info/charts/blocks-size[]）。比特幣節點也需要網路頻寬來傳輸和接收比特幣交易和區塊。如果你的網路頻寬有限，則你可能不應該在其上執行比特幣節點，或者以限制其頻寬的方式執行它（參見 <<constrained_resources>>）。
+然而，執行一個節點，需要有足夠資源來處理所有比特幣交易的永久的可連線的系統。取決於你是否選擇索引所有交易並儲存區塊鏈的完整副本，你可能還需要大量的磁碟空間和記憶體。在2018年初，一個全部索引的節點需要至少2GB記憶體和160GB硬碟空間（參見 https://blockchain.info/charts/blocks-size[]）。比特幣節點也需要網路頻寬來傳輸和接收比特幣交易和區塊。如果你的網路頻寬有限，則你可能不應該在其上執行比特幣節點，或者以限制其頻寬的方式執行它（參見 <<constrained_resources>>）。
 
 [TIP]
 ====
-((("warnings and cautions", "core node resource requirements")))((("resource requirements")))Bitcoin Core預設儲存完整的區塊鏈副本，包括2009年以來所有比特幣網路上發生的交易。該資料集的大小為幾十GB，可以在幾天或幾周內遞增下載，具體取決於你的CPU和網路速度。在完整的區塊鏈資料集下載完之前，Bitcoin Core將無法處理交易或更新賬戶餘額。確保你有足夠的磁碟空間，頻寬和時間來完成初始同步。你可以配置Bitcoin Core，透過丟棄舊塊來減少區塊鏈的大小。(參見 <<constrained_resources>>), 但在丟棄資料之前它仍會下載整個資料集。
+((("warnings and cautions", "core node resource requirements")))((("resource requirements")))Bitcoin Core預設儲存完整的區塊鏈副本，包括2009年以來所有比特幣網路上發生的交易。該資料集的大小為幾十GB，可以在幾天或幾周內遞增下載，具體取決於你的CPU和網路速度。在完整的區塊鏈資料集下載完之前，Bitcoin Core將無法處理交易或更新帳戶餘額。確保你有足夠的磁碟空間，頻寬和時間來完成初始同步。你可以配置Bitcoin Core，透過丟棄舊塊來減少區塊鏈的大小。(參見 <<constrained_resources>>), 但在丟棄資料之前它仍會下載整個資料集。
 
 ====
 
-儘管存在資源限制，仍有數千志願者執行比特幣節點。有些系統像Raspberry Pi一樣簡單（35美元的紙盒大小的電腦）。許多志願者還在租用伺服器上執行比特幣節點，通常是Linux的一些變體。 _Virtual Private Server_（VPS）或_Cloud Computing Server_實例可用於執行比特幣節點。這些伺服器可以每月25美元或50美元的價格從各種提供商處獲得。
+儘管存在資源限制，仍有數千志願者執行比特幣節點。有些系統像Raspberry Pi一樣簡單（35美元的紙盒大小的電腦）。許多志願者還在租用伺服器上執行比特幣節點，通常是Linux的一些變體。_Virtual Private Server_（VPS）或_Cloud Computing Server_實例可用於執行比特幣節點。這些伺服器可以每月25美元或50美元的價格從各種提供商處獲得。
 
 為什麼要執行比特幣節點呢？以下是一些理由:
 
@@ -238,7 +238,7 @@ $ which bitcoin-cli
 
 * 你正在建構必須根據比特幣的共識規則驗證交易的應用程式。例如，比特幣軟體公司通常執行多個節點。
 
-* 你想支援比特幣。執行一個節點可以使網路更強大，能夠服務更多的錢套件，更多的使用者和更多的交易。
+* 你想支援比特幣。執行一個節點可以使網路更強大，能夠服務更多的錢包，更多的使用者和更多的交易。
 
 * 你不想依賴任何第三方來處理或驗證你的交易。
 
@@ -291,7 +291,7 @@ Options:
 
 ((("configuration options", seealso="Bitcoin Core")))以下是你可以在配置檔案中設定的一些最重要的選項，也可以作為 +bitcoind+ 的命令列引數：
 
-alertnotify:: 執行指定的命令或指令碼，向該節點的所有者傳送緊急警報，通常透過電子郵件的形式。
+alertnotify:: 執行指定的命令或指令碼，向該節點的擁有者傳送緊急警報，通常透過電子郵件的形式。
 
 conf:: 配置檔案的替代位置。這僅適用於 +bitcoind+ 的命令列引數。
 
@@ -409,11 +409,11 @@ $ bitcoin-cli getblockchaininfo
 
 這展示了區塊鏈高度為0個塊，有83999個區塊頭的節點。節點先獲取最佳鏈的區塊頭，然後繼續下載完整塊。
 
-在你完成選項配置之後，應該將比特幣新增到作業系統中的啟動指令碼中，以便它可以持續執行並在作業系統重新啟動時重啟。你可以在 _contrib/init_ 下找到比特幣源目錄中各種作業系統的啟動指令碼示例以及顯示哪個系統使用哪個指令碼的 _README.md_ 檔案。((("", startref="BCnode03")))((("", startref="BNcore03")))
+在你完成選項配置之後，應該將比特幣新增到作業系統中的啟動指令碼中，以便它可以持續執行並在作業系統重新啟動時重啟。你可以在 _contrib/init_ 下找到比特幣源目錄中各種作業系統的啟動指令碼範例以及顯示哪個系統使用哪個指令碼的 _README.md_ 檔案。((("", startref="BCnode03")))((("", startref="BNcore03")))
 
 === Bitcoin Core API
 
-((("Bitcoin Core", "Bitcoin Core API", id="BCapi03")))Bitcoin Core 客戶端實現了JSON-RPC介面，也可以使用命令列工具 +bitcoin-cli+ 來訪問。命令列允許我們以互動的方式試驗透過API方式提供的功能。 ((("Bitcoin Core", "Bitcoin Core API", "RPC commands")))首先，呼叫 +help+ 命令檢視可用比特幣RPC命令的列表：
+((("Bitcoin Core", "Bitcoin Core API", id="BCapi03")))Bitcoin Core 客戶端實現了JSON-RPC介面，也可以使用命令列工具 +bitcoin-cli+ 來訪問。命令列允許我們以互動的方式試驗透過API方式提供的功能。((("Bitcoin Core", "Bitcoin Core API", "RPC commands")))首先，呼叫 +help+ 命令檢視可用比特幣RPC命令的列表：
 
 [[bitcoind_commands]]
 ----
@@ -451,7 +451,7 @@ Examples:
 > curl --user myusername --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "getblockhash", "params": [1000] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/
 ----
 
-在幫助資訊的末尾，你將看到兩個RPC命令的例子，分別使用 +bitcoin-cli+ 和HTTP客戶端 +curl+。這些示例示範瞭如何呼叫該命令。複製第一個示例並檢視結果：
+在幫助資訊的末尾，你將看到兩個RPC命令的例子，分別使用 +bitcoin-cli+ 和HTTP客戶端 +curl+。這些範例示範瞭如何呼叫該命令。複製第一個範例並檢視結果：
 
 ----
 $ bitcoin-cli getblockhash 1000
@@ -598,15 +598,15 @@ d50f654e788acd0ef8000000000001976a9147f9b1a7fb68d60c536c2fd8aeaa53a8f3cc025a8&#x
 
 解碼後的交易展示了此交易的所有組成部分，包括交易的輸入和輸出。我們看到將15mBitcoin轉到新地址的交易使用了一個輸入併產生了兩個輸出。此交易的輸入是以前確認的交易的輸出（vin中的 +txid+ ，以 +7957a35fe+ 開頭 ）。兩個輸出對應於15mBitcoin的款項，和返回給傳送者的零錢。
 
-我們可以透過使用 +getrawtransaction+ 檢查此交易中參考的前一個交易的 +txid+ 來進一步探索區塊鏈。我們可以追蹤一筆比特幣在不同所有者地址之間傳遞的交易鏈。
+我們可以透過使用 +getrawtransaction+ 檢查此交易中參考的前一個交易的 +txid+ 來進一步探索區塊鏈。我們可以追蹤一筆比特幣在不同擁有者地址之間傳遞的交易鏈。
 
 ==== 檢查區塊
 
 ((("Bitcoin Core", "Bitcoin Core API", "exploring blocks")))((("blocks", "exploring with Bitcoin Core API")))命令: +getblock+, +getblockhash+
 
-((("blocks", "block height")))((("blocks", "block hash")))檢查區塊與檢查交易類似。區塊可以透過塊_高度（height）_或塊_雜湊（hash）_來參考。首先，我們根據高度找到一個塊。在 <<cup_of_coffee>> 中，我們看到Alice的交易包含在區塊#277316中。
+((("blocks", "block height")))((("blocks", "block hash")))檢查區塊與檢查交易類似。區塊可以透過 _區塊高度_ (height) 或 _區塊雜湊_ (hash) 來參考。首先，我們根據高度找到一個塊。在 <<cup_of_coffee>> 中，我們看到Alice的交易包含在區塊#277316中。
 
-將塊高度作為 +getblockhash+ 命令的引數, ，將返回區塊的雜湊值:
+將塊高度作為 +getblockhash+ 命令的引數，將返回區塊的雜湊值:
 
 ++++
 <pre data-type="programlisting">
@@ -666,11 +666,11 @@ $ bitcoin-cli getblock 0000000000000001b6b9a13b095e96db41c4a928b97ef2d944a9b3&#x
 
 ==== 使用Bitcoin Core的程式設計介面
 
-((("Bitcoin Core", "Bitcoin Core API", "using programmatic interface")))((("programmatic interface", id="progint03")))+bitcoin-cli+ 助手對於探索比特幣核心API和測試功能非常有用。但API的重要功能是以程式設計方式訪問。在本節中，我們將示範如何透過另一個程式訪問比特幣核心。
+((("Bitcoin Core", "Bitcoin Core API", "using programmatic interface")))((("programmatic interface", id="progint03")))+bitcoin-cli+ 助手對於探索 Bitcoin Core API和測試功能非常有用。但API的重要功能是以程式設計方式訪問。在本節中，我們將示範如何透過另一個程式訪問 Bitcoin Core。
 
-Bitcoin Core的API是JSON-RPC介面. JSON代表JavaScript Object Notation，是一種非常方便人類和程式閱讀的資料格式。RPC代表遠端過程呼叫，這意味著我們透過網路協議呼叫遠端（在比特幣核心節點上的）函式。在這種情況下，網路協議是HTTP或HTTPS（用於加密連線）。
+Bitcoin Core的API是JSON-RPC介面. JSON代表JavaScript Object Notation，是一種非常方便人類和程式閱讀的資料格式。RPC代表遠端過程呼叫，這意味著我們透過網路協議呼叫遠端（在 Bitcoin Core 節點上的）函式。在這種情況下，網路協議是HTTP或HTTPS（用於加密連線）。
 
-當我們使用 +bitcoin-cli+ 命令獲取命令幫助時，它向我們展示了使用 +curl+（常用的命令列HTTP客戶端）構造JSON-RPC呼叫的示例：
+當我們使用 +bitcoin-cli+ 命令獲取命令幫助時，它向我們展示了使用 +curl+（常用的命令列HTTP客戶端）構造JSON-RPC呼叫的範例：
 
 ----
 $ curl --user myusername --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/
@@ -678,13 +678,13 @@ $ curl --user myusername --data-binary '{"jsonrpc": "1.0", "id":"curltest", "met
 
 此命令表示 +curl+ 向本地主機（127.0.0.1）提交HTTP請求，連線到預設的比特幣埠（8332），並使用 +text/plain+ 編碼為 +getblockchaininfo+ 方法提交 +jsonrpc+ 請求。
 
-你可能會注意到curl會要求憑證隨請求一起傳送。 Bitcoin Core在每次啟動時建立一個隨機密碼，並將其放置在名稱為 +.cookie+ 的資料目錄中。 +bitcoin-cli+ 助手可以根據資料目錄讀取此密碼檔案。同樣，你可以複製密碼並將其傳遞給curl（或任何更高級別的Bitcoin Core RPC包裝器）。或者，你可以使用Bitcoin Core原始碼目錄中的 _./share/rpcuser/rpcuser.py_ 中提供的助手程式指令碼建立一個靜態密碼。
+你可能會注意到curl會要求憑證隨請求一起傳送。Bitcoin Core在每次啟動時建立一個隨機密碼，並將其放置在名稱為 +.cookie+ 的資料目錄中。+bitcoin-cli+ 助手可以根據資料目錄讀取此密碼檔案。同樣，你可以複製密碼並將其傳遞給curl（或任何更高級別的Bitcoin Core RPC包裝器）。或者，你可以使用 Bitcoin Core 原始碼目錄中的 _./share/rpcuser/rpcuser.py_ 中提供的助手程式指令碼建立一個靜態密碼。
 
-你可以正在自己的程式中使用HTTP函式庫來實現JSON-RPC呼叫，類似於前面的 +curl+ 示例。
+你可以正在自己的程式中使用HTTP函式庫來實現JSON-RPC呼叫，類似於前面的 +curl+ 範例。
 
-然而，大多數程式語言都有一些“包裝”了比特幣核心API的函式庫，簡便很多。我們將使用 +python-bitcoinlib+ 函式庫來簡化API訪問。你需要有一個正在執行的Bitcoin Core實例，用於進行JSON-RPC呼叫。
+然而，大多數程式語言都有一些“包裝”了 Bitcoin Core API 的函式庫，簡便很多。我們將使用 +python-bitcoinlib+ 函式庫來簡化API訪問。你需要有一個正在執行的Bitcoin Core實例，用於進行JSON-RPC呼叫。
 
-<<rpc_example>> 中的Python指令碼呼叫 +getblockchaininfo+ 並列印返回資料中的區塊個數。
+<<rpc_example>> 中的 Python 指令碼呼叫 +getblockchaininfo+ 並列印返回資料中的區塊個數。
 
 [[rpc_example]]
 .Running getblockchaininfo via Bitcoin Core's JSON-RPC API
@@ -704,7 +704,7 @@ $ python rpc_example.py
 
 它標明本地的Bitcoin Core節點在其區塊鏈中有394075個區塊。
 
-接下來，讓我們使用 +getrawtransaction+ 和 +decodetransaction+ 呼叫來檢索Alice的咖啡交易細節。在<<rpc_transaction>>中，我們檢索Alice的交易並列出交易的輸出。對於每個輸出，我們顯示收件人地址和值。提醒一下，Alice的交易有一個支付給Bob's Cafe的輸出和一個返回給Alice的找零輸出。
+接下來，讓我們使用 +getrawtransaction+ 和 +decodetransaction+ 呼叫來檢索Alice的咖啡交易細節。在<<rpc_transaction>>中，我們檢索Alice的交易並列出交易的輸出。對於每個輸出，我們顯示收件人地址和值。提醒一下，Alice 的交易有一個支付給 Bob's Cafe 的輸出和一個返回給Alice的找零輸出。
 
 [[rpc_transaction]]
 .Retrieving a transaction and iterating its outputs
@@ -744,7 +744,7 @@ $ python rpc_block.py
 ('Total value in block: ', Decimal('10322.07722534'))
 ----
 
-我們的示例程式碼計算出此區塊的總價值為10322.07722534 BTC（包括25BTC獎勵和0.0909BTC費用）。透過在區塊瀏覽器中搜索雜湊或高度，進行資料比較。一些區塊瀏覽器報告不包括獎勵和排除費用的總價值，看看你是否可以發現差異。((("", startref="BCapi03")))((("", startref="progint03")))
+我們的範例程式碼計算出此區塊的總價值為10322.07722534 BTC（包括25BTC獎勵和0.0909BTC費用）。透過在區塊瀏覽器中搜尋雜湊或高度，進行資料比較。一些區塊瀏覽器報告不包括獎勵和排除費用的總價值，看看你是否可以發現差異。((("", startref="BCapi03")))((("", startref="progint03")))
 
 [[alt_libraries]]
 === 可選的客戶端、程式函式庫和工具套件
@@ -754,7 +754,7 @@ $ python rpc_block.py
 下面列出了一些：
 
 ==== C/C++
-https://github.com/bitcoin/bitcoin[Bitcoin Core] :: 比特幣的參考實現
+https://github.com/bitcoin/bitcoin[Bitcoin Core] :: 比特幣的參考實作
 https://github.com/libbitcoin/libbitcoin[libbitcoin]:: 跨平臺的C++開發工具，節點和共識函式函式庫
 https://github.com/libbitcoin/libbitcoin-explorer[bitcoin explorer]:: Libbitcoin的命令列工具
 https://github.com/jgarzik/picocoin[picocoin]:: Jeff Garzik寫的C語音的輕量級比特幣客戶端函式庫
@@ -795,4 +795,4 @@ https://github.com/oleganza/CoreBitcoin[CoreBitcoin]:: 為ObjC和Swift提供的�
 
 <<第四章#,下一章：金鑰與地址>>
 
-image::images/thanks.jpeg["讚賞譯者",height=400,align="center"]
+
