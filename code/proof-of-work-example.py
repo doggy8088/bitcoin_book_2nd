@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Proof-of-Work 算法示例
+# Proof-of-Work 算法範例
 
 import hashlib
 import time

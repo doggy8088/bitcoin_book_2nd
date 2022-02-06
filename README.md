@@ -35,14 +35,12 @@
 
 [第十二章 區塊鏈應用](第十二章.asciidoc)
 
-### 原書購買連結：
+### 原書購買連結
+
 [Amazon](https://www.amazon.com/Mastering-Bitcoin-Programming-Open-Blockchain/dp/1491954388)
 
 ### 關於譯者
-網際網路從業者，對經濟學感興趣，很早加入數字貨幣和區塊鏈研究。
 
-閒暇時間翻譯，歡迎指正，感謝加星~
+正體中文版由[ Will 保哥的技術交流中心](https://www.facebook.com/will.fans/) 負責編譯、校正，原始簡體中文版本取自 <https://github.com/inoutcode/bitcoin_book_2nd>
 
 [下一章：前言](前言.asciidoc)
-### 打賞
-![](images/thanks.jpeg)
